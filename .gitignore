@@ -1,4 +1,18 @@
-target/
+# Help files
+HELP.md
+
+# Maven target directory
+/target/
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+# Maven Wrapper files
+.mvn/wrapper/maven-wrapper.jar
+
+# Ignore sensitive application.properties (optional, if it contains sensitive info)
+/src/main/resources/application.properties
+
+# Maven specific files
 pom.xml.tag
 pom.xml.releaseBackup
 pom.xml.versionsBackup
@@ -7,11 +21,36 @@ release.properties
 dependency-reduced-pom.xml
 buildNumber.properties
 .mvn/timing.properties
-# https://github.com/takari/maven-wrapper#usage-without-binary-jar
-.mvn/wrapper/maven-wrapper.jar
 
-# Eclipse m2e generated files
-# Eclipse Core
-.project
-# JDT-specific (Eclipse Java Development Tools)
+# Eclipse, IntelliJ, NetBeans and other IDE-specific files
+### Eclipse/STS ###
+.apt_generated
 .classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea/
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### VS Code ###
+.vscode/
+
+# OS-specific files
+.DS_Store
+Thumbs.db
