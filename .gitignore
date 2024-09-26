@@ -54,3 +54,8 @@ build/
 # OS-specific files
 .DS_Store
 Thumbs.db
+
+*.jar
+*.war
+*.log
+*.tmp
