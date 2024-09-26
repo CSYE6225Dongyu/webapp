@@ -1,6 +1,7 @@
 package edu.neu.csye6225.csye6225fall2024.controller;
 
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/healthz")
@@ -25,11 +27,12 @@ public class HealthCheckCont {
 
     //request method
     @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity<String> DBHealthCheck(@RequestBody(required = false) String body) {
+    public ResponseEntity<String> DBHealthCheck(HttpServletRequest request) {
         Map<String, String> response = new HashMap<>();
 
         // If body has payload, return bad request
-        if(body != null) {
+        // use HttpServletRequest class make sure cover all type of body data
+        if(request.getContentLengthLong() > 0 || request.getContentType() != null) {
             return ResponseEntity.badRequest()
                     .header("Cache-Control", "no-cache, no-store, must-revalidate")
                     .header("Pragma", "no-cache")
@@ -58,7 +61,7 @@ public class HealthCheckCont {
         }
     }
 
-    @RequestMapping(method = {RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE})
+    @RequestMapping(method = {RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE,RequestMethod.OPTIONS,RequestMethod.HEAD,RequestMethod.PATCH,RequestMethod.TRACE})
     public ResponseEntity<String> invalidMethod() {
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED)
                 .header("Cache-Control", "no-cache, no-store, must-revalidate")
