@@ -39,6 +39,12 @@ public class HealthCheckCont {
                     .build();
         }
 
+        if(!request.getParameterMap().isEmpty()){
+            return ResponseEntity.badRequest()
+                    .header("Cache-Control", "no-cache, no-store, must-revalidate")
+                    .header("Pragma", "no-cache")
+                    .build();
+        }
         try(Connection conn = dataSource.getConnection()) {
             if (conn.isValid(1)) {
                 //conn is valid
