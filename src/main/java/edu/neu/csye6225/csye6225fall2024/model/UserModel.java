@@ -2,9 +2,11 @@ package edu.neu.csye6225.csye6225fall2024.model;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "users")
-public class User {
+public class UserModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -15,14 +17,15 @@ public class User {
     private String password;
     private String firstName;
     private String lastName;
+    private LocalDateTime accountCreated;
+    private LocalDateTime accountUpdated;
 
-    // Getters and Setters
-    public Long getId() {
-        return id;
+    public LocalDateTime getAccountCreated() {
+        return accountCreated;
     }
 
-    public String getEmail() {
-        return email;
+    public LocalDateTime getAccountUpdated() {
+        return accountUpdated;
     }
 
     public String getFirstName() {
@@ -31,6 +34,22 @@ public class User {
 
     public String getLastName() {
         return lastName;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public void setEmail(String email) {
@@ -48,4 +67,13 @@ public class User {
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
+
+    public void setAccountCreated(LocalDateTime accountCreated) {
+        this.accountCreated = accountCreated;
+    }
+
+    public void setAccountUpdated(LocalDateTime accountUpdated) {
+        this.accountUpdated = accountUpdated;
+    }
+
 }

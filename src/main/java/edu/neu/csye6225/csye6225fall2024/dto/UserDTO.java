@@ -1,13 +1,13 @@
 package edu.neu.csye6225.csye6225fall2024.dto;
 
 public class UserDTO {
-    private String emailAddress;
+    private String email;
     private String password;
     private String firstName;
     private String lastName;
 
-    public String getEmailAddress() {
-        return emailAddress;
+    public String getEmail() {
+        return email;
     }
 
     public String getPassword() {
@@ -22,8 +22,8 @@ public class UserDTO {
         return lastName;
     }
 
-    public void setEmailAddress(String emailAddress) {
-        this.emailAddress = emailAddress;
+    public void setEmail(String emailAddress) {
+        this.email = emailAddress;
     }
 
     public void setPassword(String password) {
