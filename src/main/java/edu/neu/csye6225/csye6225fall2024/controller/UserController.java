@@ -29,20 +29,27 @@ public class UserController {
     private ValidateFields validateFields;
 
     @PostMapping
-    public ResponseEntity<String> creatUser(@RequestBody Map<String, Object> requestBody) {
+    public ResponseEntity<UserGETDTO> creatUser(@RequestBody Map<String, Object> requestBody) {
 
-        if(validateFields.postValidate(requestBody) != null)
-            return ResponseEntity.badRequest().body("Invalid field: " + validateFields.postValidate(requestBody));
+        // validate json
+        String invalidField = validateFields.postValidate(requestBody);
+        if (invalidField != null) {
+            return ResponseEntity.badRequest().body(null); // 可以定制错误消息，例如返回具体的字段名
+        }
 
+        // transfer to DTO type
         UserPostDTO userPostDTO = new ObjectMapper().convertValue(requestBody, UserPostDTO.class);
 
         try {
+            // create user
             userService.createUser(userPostDTO);
-            return ResponseEntity.status(HttpStatus.CREATED).body("User created success");
+            // return info
+            UserGETDTO userGETDTO = userService.getUserByEmail(userPostDTO.getEmail());
+            return ResponseEntity.status(HttpStatus.CREATED).body(userGETDTO);
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error occurred while creating user");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
 
@@ -81,12 +88,12 @@ public class UserController {
         return authentication.getName();
     }
 
-    //Unrecognized filed
-    @ExceptionHandler(UnrecognizedPropertyException.class)
-    public ResponseEntity<String> handleUnrecognizedPropertyException(UnrecognizedPropertyException ex) {
-        String errorMessage = "Invalid JSON field: " + ex.getPropertyName();
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessage);
-    }
+//    //Unrecognized filed
+//    @ExceptionHandler(UnrecognizedPropertyException.class)
+//    public ResponseEntity<String> handleUnrecognizedPropertyException(UnrecognizedPropertyException ex) {
+//        String errorMessage = "Invalid JSON field: " + ex.getPropertyName();
+//        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessage);
+//    }
 
     @RequestMapping(method = {RequestMethod.GET, RequestMethod.PUT, RequestMethod.DELETE,RequestMethod.OPTIONS,RequestMethod.HEAD,RequestMethod.PATCH,RequestMethod.TRACE})
     public ResponseEntity<String> invalidMethod() {

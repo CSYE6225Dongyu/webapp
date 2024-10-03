@@ -52,11 +52,7 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>edu.neu.csye6225</groupId>
-            <artifactId>CSYE6225FALL2024</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
+        <!-- Removed the self-referencing dependency -->
     </dependencies>
 
     <build>
