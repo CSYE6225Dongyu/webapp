@@ -34,7 +34,7 @@ public class UserController {
         // validate json
         String invalidField = validateFields.postValidate(requestBody);
         if (invalidField != null) {
-            return ResponseEntity.badRequest().body(null); // 可以定制错误消息，例如返回具体的字段名
+            return ResponseEntity.badRequest().body(null);
         }
 
         // transfer to DTO type
