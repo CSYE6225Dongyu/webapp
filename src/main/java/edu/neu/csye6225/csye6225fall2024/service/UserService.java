@@ -1,7 +1,8 @@
 package edu.neu.csye6225.csye6225fall2024.service;
 
-import edu.neu.csye6225.csye6225fall2024.dto.UserDTO;
+import edu.neu.csye6225.csye6225fall2024.dto.UserPostDTO;
 import edu.neu.csye6225.csye6225fall2024.dto.UserGETDTO;
+import edu.neu.csye6225.csye6225fall2024.dto.UserUpdateDTO;
 import edu.neu.csye6225.csye6225fall2024.model.UserModel;
 import edu.neu.csye6225.csye6225fall2024.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,23 +23,23 @@ public class UserService {
     private PasswordEncoder passwordEncoder;// password class from AuthorizeConfig
 
     //create user
-    public void createUser(UserDTO userDTO) {
+    public void createUser(UserPostDTO userPostDTO) {
         //check the user
-        Optional<UserModel> existUser = userRepository.findByEmail(userDTO.getEmail());
+        Optional<UserModel> existUser = userRepository.findByEmail(userPostDTO.getEmail());
         if (existUser.isPresent()) {
             throw new IllegalArgumentException("User email already exists.");
         }
 
-        if(userDTO.getEmail() == null || userDTO.getPassword() == null)
+        if(userPostDTO.getEmail() == null || userPostDTO.getPassword() == null || userPostDTO.getLastName() == null)
             throw new IllegalArgumentException("missing filed required");
 
         UserModel user = new UserModel();
-        user.setEmail(userDTO.getEmail());
+        user.setEmail(userPostDTO.getEmail());
         // bycrypt
-        user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+        user.setPassword(passwordEncoder.encode(userPostDTO.getPassword()));
 
-        user.setFirstName(userDTO.getFirstName());
-        user.setLastName(userDTO.getLastName());
+        user.setFirstName(userPostDTO.getFirstName());
+        user.setLastName(userPostDTO.getLastName());
 
         user.setAccountCreated(LocalDateTime.now());
         user.setAccountUpdated(LocalDateTime.now());
@@ -47,12 +48,9 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public void updateUser(String email, UserDTO userUpdateDTO) {
+    public void updateUser(String email, UserUpdateDTO userUpdateDTO) {
         UserModel user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-
-        if(userUpdateDTO.getEmail() != null )
-            throw new IllegalArgumentException("illegal filed changes");
 
 
         // when called, must change something

@@ -1,8 +1,12 @@
 package edu.neu.csye6225.csye6225fall2024.controller;
 
-import edu.neu.csye6225.csye6225fall2024.dto.UserDTO;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
+import edu.neu.csye6225.csye6225fall2024.dto.UserPostDTO;
 import edu.neu.csye6225.csye6225fall2024.dto.UserGETDTO;
-import edu.neu.csye6225.csye6225fall2024.model.UserModel;
+import edu.neu.csye6225.csye6225fall2024.dto.UserUpdateDTO;
+import edu.neu.csye6225.csye6225fall2024.service.ValidateFields;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,17 +15,29 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import edu.neu.csye6225.csye6225fall2024.service.UserService;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
 @RestController
 @RequestMapping("/v1/users")
 public class UserController {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private ValidateFields validateFields;
 
     @PostMapping
-    public ResponseEntity<String> creatUser(@RequestBody UserDTO userDTO) {
+    public ResponseEntity<String> creatUser(@RequestBody Map<String, Object> requestBody) {
+
+        if(validateFields.postValidate(requestBody) != null)
+            return ResponseEntity.badRequest().body("Invalid field: " + validateFields.postValidate(requestBody));
+
+        UserPostDTO userPostDTO = new ObjectMapper().convertValue(requestBody, UserPostDTO.class);
+
         try {
-            userService.createUser(userDTO);
+            userService.createUser(userPostDTO);
             return ResponseEntity.status(HttpStatus.CREATED).body("User created success");
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
@@ -42,10 +58,15 @@ public class UserController {
     }
 
     @PutMapping("/self")
-    public ResponseEntity<String> updateUser( @RequestBody UserDTO userDTO) {
+    public ResponseEntity<String> updateUser(@RequestBody Map<String, Object> requestBody) {
+        if(validateFields.updateValidate(requestBody) != null)
+            return ResponseEntity.badRequest().body("Unexpected field: " + validateFields.updateValidate(requestBody));
+
+        UserUpdateDTO userUpdateDTO = new ObjectMapper().convertValue(requestBody, UserUpdateDTO.class);
+
         try {
             String email = getCurrentUserEmail();
-            userService.updateUser(email, userDTO);
+            userService.updateUser(email, userUpdateDTO);
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body("User updated success");
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
@@ -58,6 +79,13 @@ public class UserController {
     private String getCurrentUserEmail() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return authentication.getName();
+    }
+
+    //Unrecognized filed
+    @ExceptionHandler(UnrecognizedPropertyException.class)
+    public ResponseEntity<String> handleUnrecognizedPropertyException(UnrecognizedPropertyException ex) {
+        String errorMessage = "Invalid JSON field: " + ex.getPropertyName();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessage);
     }
 
     @RequestMapping(method = {RequestMethod.GET, RequestMethod.PUT, RequestMethod.DELETE,RequestMethod.OPTIONS,RequestMethod.HEAD,RequestMethod.PATCH,RequestMethod.TRACE})
