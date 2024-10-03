@@ -29,6 +29,9 @@ public class UserService {
             throw new IllegalArgumentException("User email already exists.");
         }
 
+        if(userDTO.getEmail() == null || userDTO.getPassword() == null)
+            throw new IllegalArgumentException("missing filed required");
+
         UserModel user = new UserModel();
         user.setEmail(userDTO.getEmail());
         // bycrypt
@@ -44,14 +47,31 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public void updateUser(String email, UserDTO userDTO) {
+    public void updateUser(String email, UserDTO userUpdateDTO) {
         UserModel user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        user.setFirstName(userDTO.getFirstName());
-        user.setLastName(userDTO.getLastName());
+        if(userUpdateDTO.getEmail() != null )
+            throw new IllegalArgumentException("illegal filed changes");
 
-        user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+
+        // when called, must change something
+        boolean updated = false;
+        if (userUpdateDTO.getFirstName() != null) {
+            user.setFirstName(userUpdateDTO.getFirstName());
+            updated = true;
+        }
+        if (userUpdateDTO.getLastName() != null) {
+            user.setLastName(userUpdateDTO.getLastName());
+            updated = true;
+        }
+        if (userUpdateDTO.getPassword() != null) {
+            user.setPassword(passwordEncoder.encode(userUpdateDTO.getPassword()));
+            updated = true;
+        }
+        // exception when nothing changes
+        if (!updated)
+            throw new IllegalArgumentException("No valid fields to update");
 
         user.setAccountUpdated(LocalDateTime.now());
 

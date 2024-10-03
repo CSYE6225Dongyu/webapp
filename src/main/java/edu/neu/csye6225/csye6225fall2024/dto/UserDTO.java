@@ -1,5 +1,7 @@
 package edu.neu.csye6225.csye6225fall2024.dto;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+@JsonIgnoreProperties(ignoreUnknown = false) // not allow other filed and not working
 public class UserDTO {
     private String email;
     private String password;

@@ -46,9 +46,9 @@ public class UserController {
         try {
             String email = getCurrentUserEmail();
             userService.updateUser(email, userDTO);
-            return ResponseEntity.ok("User updated success");
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("User updated success");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error occurred while updating user");
         }
@@ -59,5 +59,22 @@ public class UserController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return authentication.getName();
     }
+
+    @RequestMapping(method = {RequestMethod.GET, RequestMethod.PUT, RequestMethod.DELETE,RequestMethod.OPTIONS,RequestMethod.HEAD,RequestMethod.PATCH,RequestMethod.TRACE})
+    public ResponseEntity<String> invalidMethod() {
+        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED)
+                .header("Cache-Control", "no-cache, no-store, must-revalidate")
+                .header("Pragma", "no-cache")
+                .build();
+    }
+
+    @RequestMapping(value = "/self", method = {RequestMethod.DELETE, RequestMethod.OPTIONS, RequestMethod.HEAD, RequestMethod.PATCH, RequestMethod.TRACE, RequestMethod.POST})
+    public ResponseEntity<String> invalidSelfMethod() {
+        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED)
+                .header("Cache-Control", "no-cache, no-store, must-revalidate")
+                .header("Pragma", "no-cache")
+                .build();
+    }
+
 
 }
