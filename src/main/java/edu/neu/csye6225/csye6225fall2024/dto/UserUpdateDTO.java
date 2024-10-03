@@ -5,12 +5,7 @@ public class UserUpdateDTO {
     private String firstName;
     private String lastName;
     private String password;
-
-    public UserUpdateDTO(String firstName, String lastName, String password) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.password = password;
-    }
+    //for json Deserialization, use default constructor
 
     public String getFirstName() {
         return firstName;

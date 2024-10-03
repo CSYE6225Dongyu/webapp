@@ -1,8 +1,9 @@
 package edu.neu.csye6225.csye6225fall2024.dto;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.springframework.lang.NonNull;
 
 @JsonIgnoreProperties(ignoreUnknown = false) // not allow other filed and not working
-public class UserDTO {
+public class UserPostDTO {
     private String email;
     private String password;
     private String firstName;
