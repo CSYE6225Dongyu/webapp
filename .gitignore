@@ -10,7 +10,7 @@ HELP.md
 .mvn/wrapper/maven-wrapper.jar
 
 # Ignore sensitive application.properties (optional, if it contains sensitive info)
-/src/main/resources/application.properties
+application.properties
 
 # Maven specific files
 pom.xml.tag
