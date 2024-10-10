@@ -93,6 +93,8 @@ Replace `<project-name>` with the actual name of the packaged JAR file.
 
 Once the application is running, you can access the health check API at:
 
+
+
 ```
 http://localhost:8080/healthz
 ```
