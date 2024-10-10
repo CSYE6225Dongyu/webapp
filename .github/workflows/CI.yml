@@ -4,6 +4,7 @@ on:
   pull_request:
     branches:
       - main
+      - A02
 
 jobs:
   build:
