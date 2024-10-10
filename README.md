@@ -2,9 +2,7 @@
 
 ## Overview
 
-This project is a simple web application built using **Java Spring Boot** that provides a health check endpoint `/healthz`. The endpoint checks the connection status of the application with the database and returns appropriate HTTP status codes.
-
-
+This project is a simple web application built using **Java Spring Boot** that provides a health check endpoint `/healthz`. And a user register and update API with endpoint `/v1/user` and `/v1/user/self`. 
 
 ## Prerequisites
 
@@ -55,8 +53,10 @@ spring.datasource.password=<your-database-password>
 spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
 
 # JPA/Hibernate Configuration
-spring.jpa.hibernate.ddl-auto=update
+spring.jpa.hibernate.ddl-auto=none
 spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQLDialect
 ```
 
 > **Note**: The database URL format will vary based on the type of database you are using.
@@ -99,7 +99,10 @@ http://localhost:8080/healthz
 
 This endpoint will return different HTTP status codes based on the health of your database connection.
 
-- **200 OK**: Database connection is healthy.
-- **503 Service Unavailable**: Database connection failed.
-- **405 Method Not Allowed**: If an unsupported HTTP method is used.
+- **200 OK**: Request Success.
+- **201 Created**: User created.
+- **204 No content**: Update Successful
 - **400 Bad Request**: If the request contains a payload.
+- **401 Unauthorized**: Unauthorized user.
+- **405 Method Not Allowed**: If an unsupported HTTP method is used.
+- **503 Service Unavailable**: Database connection failed.
