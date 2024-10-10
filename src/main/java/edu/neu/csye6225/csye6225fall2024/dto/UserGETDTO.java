@@ -20,6 +20,8 @@ public class UserGETDTO {
         this.accountUpdated = accountUpdated;
     }
 
+    public UserGETDTO() {}
+
     public String getEmail() {
         return email;
     }
