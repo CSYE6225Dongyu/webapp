@@ -47,7 +47,7 @@ jobs:
           echo "spring.jpa.properties.hibernate.dialect=${{ secrets.SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT }}" >> src/main/resources/application.properties
 
       - name: Build JAR file
-        run: ./mvn clean package -Dmaven.test.skip=true
+        run: ./mvnw clean package -Dmaven.test.skip=true
 
       - name: Compress JAR file into webapp.zip
         run: |
