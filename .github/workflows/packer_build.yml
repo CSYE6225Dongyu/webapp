@@ -62,5 +62,5 @@ jobs:
 
       - name: Run Packer to build the AMI
         run: |
-          packer build -var-file= awspacker.pkr.hcl
+          packer build -var-file=awspacker.pkvars.hcl awspacker.pkr.hcl
         working-directory: ./packer  # Set Packer directory to "packer" in the root directory
