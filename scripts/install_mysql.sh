@@ -11,6 +11,9 @@ sudo systemctl start mysql
 
 #  MySQL database and user
 sudo mysql -e "CREATE DATABASE myapp;"
+sudo mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED BY 'your_new_password';"
 sudo mysql -e "CREATE USER 'appuser'@'localhost' IDENTIFIED BY '12345678';"
 sudo mysql -e "GRANT ALL PRIVILEGES ON myapp.* TO 'appuser'@'localhost';"
 sudo mysql -e "FLUSH PRIVILEGES;"
+
+echo "Mysql installed and configured successfully"

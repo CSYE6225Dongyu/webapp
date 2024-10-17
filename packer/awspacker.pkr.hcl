@@ -65,32 +65,30 @@ source "amazon-ebs" "my-ami" {
         volume_size           = 8
         volume_type           = "gp2"
     }
+}
 
-    build {
-        sources = ["source.amazon-ebs.my-ami"]
+build {
+    sources = ["source.amazon-ebs.my-ami"]
 
-        provisioner "file" {
-            source = "./webapp.zip"
-            destination = "./tmp/webapp.zip"
-        }
-
-        provisioner "file" {
-            soure = "./scripts/webapp.service"
-            destination = "./tmp/webapp.service"
-        }
-
-        provisioner "shell" {
-            environment_vars = [
-                "DEBIAN_FRONTEND=noninteractive",
-                "CHECKPOINT_DISABLE=1",
-            ]
-            scripts = [
-                "install_mysql.sh",
-                "install_java.sh",
-            ]
-        }
+    provisioner "file" {
+        source      = "../webapp.zip"
+        destination = "/tmp/webapp.zip"
     }
 
+    provisioner "file" {
+        source       = "../scripts/webapp.service"
+        destination = "/tmp/webapp.service"
+    }
 
-
+    provisioner "shell" {
+        environment_vars = [
+            "DEBIAN_FRONTEND=noninteractive",
+            "CHECKPOINT_DISABLE=1",
+        ]
+        scripts = [
+            "../scripts/install_mysql.sh",  # for mysql
+            "../scripts/install_java.sh",   #for java and unzip jar
+            "../scripts/systemd.sh"         # run web.service to start
+        ]
+    }
 }
