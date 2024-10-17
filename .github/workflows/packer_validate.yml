@@ -17,6 +17,12 @@ jobs:
         run: packer init .
         working-directory: ./packer
 
+      # Create an empty placeholder ZIP file
+      - name: Create placeholder webapp.zip
+        run: |
+          touch webapp.zip
+        working-directory: ./  # Create it in the root directory
+
       - name: Check Packer Format
         run: |
           packer fmt -check .
