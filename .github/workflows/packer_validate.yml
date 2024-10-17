@@ -1,0 +1,27 @@
+name: Packer Validation Workflow
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  packer-fmt-validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Check Packer Format
+        run: |
+          packer fmt -check .
+          if [ $? -ne 0 ]; then
+            echo "Packer format check failed!"
+            exit 1
+          fi
+        working-directory: ./packer
+
+      - name: Run Packer Validate
+        run: packer validate .
+        working-directory: ./packer
