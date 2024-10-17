@@ -1,15 +1,17 @@
 package edu.neu.csye6225.csye6225fall2024.dto;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import jakarta.validation.constraints.Email;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.validation.constraints.NotBlank;
-import org.springframework.lang.NonNull;
+import jakarta.validation.constraints.Pattern;
 
 @JsonIgnoreProperties(ignoreUnknown = false) // not allow other filed and not working
 public class UserPostDTO {
 
     @NotBlank(message = "Email cannot be empty")
-    @Email(message = "Invalid email format")
+    @Pattern(
+            regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$",
+            message = "Invalid email format"
+    )
     private String email;
     private String password;
     private String firstName;
