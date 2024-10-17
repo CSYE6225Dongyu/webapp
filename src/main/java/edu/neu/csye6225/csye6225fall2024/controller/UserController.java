@@ -1,22 +1,19 @@
 package edu.neu.csye6225.csye6225fall2024.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
-import edu.neu.csye6225.csye6225fall2024.dto.UserPostDTO;
 import edu.neu.csye6225.csye6225fall2024.dto.UserGETDTO;
+import edu.neu.csye6225.csye6225fall2024.dto.UserPostDTO;
 import edu.neu.csye6225.csye6225fall2024.dto.UserUpdateDTO;
+import edu.neu.csye6225.csye6225fall2024.service.UserService;
 import edu.neu.csye6225.csye6225fall2024.service.ValidateFields;
-import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import edu.neu.csye6225.csye6225fall2024.service.UserService;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -29,17 +26,7 @@ public class UserController {
     private ValidateFields validateFields;
 
     @PostMapping
-    public ResponseEntity<UserGETDTO> creatUser(@RequestBody Map<String, Object> requestBody) {
-
-        // validate json
-        String invalidField = validateFields.postValidate(requestBody);
-        if (invalidField != null) {
-            return ResponseEntity.badRequest().body(null);
-        }
-
-        // transfer to DTO type
-        UserPostDTO userPostDTO = new ObjectMapper().convertValue(requestBody, UserPostDTO.class);
-
+    public ResponseEntity<UserGETDTO> createUser(@Valid @RequestBody UserPostDTO userPostDTO) {
         try {
             // create user
             userService.createUser(userPostDTO);
@@ -49,9 +36,32 @@ public class UserController {
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
     }
+//    public ResponseEntity<UserGETDTO> creatUser(@RequestBody Map<String, Object> requestBody) {
+//
+//        // validate json
+//        String invalidField = validateFields.postValidate(requestBody);
+//        if (invalidField != null) {
+//            return ResponseEntity.badRequest().body(null);
+//        }
+//
+//        // transfer to DTO type
+//        UserPostDTO userPostDTO = new ObjectMapper().convertValue(requestBody, UserPostDTO.class);
+//
+//        try {
+//            // create user
+//            userService.createUser(userPostDTO);
+//            // return info
+//            UserGETDTO userGETDTO = userService.getUserByEmail(userPostDTO.getEmail());
+//            return ResponseEntity.status(HttpStatus.CREATED).body(userGETDTO);
+//        } catch (IllegalArgumentException e) {
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+//        }
+//    }
 
     @GetMapping("/self")
     public ResponseEntity<UserGETDTO> getUser() {
