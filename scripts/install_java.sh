@@ -17,12 +17,12 @@ sudo apt-get install -y unzip
 java -version
 
 # Create webapp directory and move the zip file
-sudo mkdir /home/ubuntu/webapp
-sudo cp /tmp/webapp.zip /home/ubuntu/webapp/webapp.zip
-cd /home/ubuntu/webapp
-sudo unzip webapp.zip -d /home/ubuntu/webapp/
+sudo mkdir /opt/webapp
+sudo cp /tmp/webapp.zip /opt/webapp/webapp.zip
+cd /opt/webapp
+sudo unzip webapp.zip -d /opt/webapp/
 
 # Change ownership of the webapp directory and its contents
-sudo chown -R csye6225:csye6225 /home/ubuntu/webapp
+sudo chown -R csye6225:csye6225 /opt/webapp
 
 echo "Java JAR file prepared"

@@ -4,11 +4,11 @@ Documentation=https://github.com/dongyul1u/webapp
 After=network.target
 
 [Service]
-#EnvironmentFile=/home/ubuntu/webapp/.env
-WorkingDirectory=/home/ubuntu/webapp/
+#EnvironmentFile=/opt/webapp/.env
+WorkingDirectory=/opt/webapp/
 User=csye6225
 Type=simple
-ExecStart=/usr/bin/java -jar /home/ubuntu/webapp/CSYE6225FALL2024-0.0.1-SNAPSHOT.jar
+ExecStart=/usr/bin/java -jar /opt/webapp/CSYE6225FALL2024-0.0.1-SNAPSHOT.jar
 SuccessExitStatus=143
 Restart=on-failure
 RestartSec=5
