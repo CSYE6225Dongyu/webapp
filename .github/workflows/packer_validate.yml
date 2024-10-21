@@ -7,6 +7,7 @@ on:
 
 jobs:
   packer-fmt-validate:
+    if: github.repository == 'CSYE6225Dongyu/webapp'
     runs-on: ubuntu-latest
 
 
