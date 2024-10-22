@@ -108,3 +108,6 @@ This endpoint will return different HTTP status codes based on the health of you
 - **401 Unauthorized**: Unauthorized user.
 - **405 Method Not Allowed**: If an unsupported HTTP method is used.
 - **503 Service Unavailable**: Database connection failed.
+
+
+
