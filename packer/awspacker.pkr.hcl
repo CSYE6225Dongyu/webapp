@@ -47,7 +47,7 @@ variable "ami_users" {
 source "amazon-ebs" "my-ami" {
   region          = var.aws_region
   ami_name        = var.ami_name
-  ami_description = "AMI for CSYE6225 HW4"
+  ami_description = "AMI for CSYE6225 HW5"
   ami_users       = var.ami_users
 
   aws_polling {

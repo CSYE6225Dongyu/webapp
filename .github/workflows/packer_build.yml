@@ -32,7 +32,8 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Generate application.properties
+      # no need for .env when package the JAR file, create in terraform:user_data
+      - name: Generate application.properties & .env
         run: |
           echo "spring.application.name=${{ secrets.SPRING_APPLICATION_NAME }}" > src/main/resources/application.properties
           echo "logging.level.org.springframework.security=${{ secrets.LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY }}" >> src/main/resources/application.properties
