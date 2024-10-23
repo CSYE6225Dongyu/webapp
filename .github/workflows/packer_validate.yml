@@ -22,9 +22,10 @@ jobs:
         working-directory: ./packer
 
       # Create an empty placeholder ZIP file
-      - name: Create placeholder webapp.zip
+      - name: Create placeholder webapp.zip & .env
         run: |
           touch webapp.zip
+          touch .env
         working-directory: ./  # Create it in the root directory
 
       - name: Check Packer Format
