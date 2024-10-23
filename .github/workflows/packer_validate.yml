@@ -10,9 +10,6 @@ jobs:
     if: github.repository == 'CSYE6225Dongyu/webapp'
     runs-on: ubuntu-latest
 
-
-
-
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
@@ -26,7 +23,6 @@ jobs:
         run: |
           touch webapp.zip
           touch .env
-#           for test
           touch application.properties
         working-directory: ./  # Create it in the root directory
 
