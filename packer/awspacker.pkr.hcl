@@ -82,6 +82,12 @@ build {
     destination = "/tmp/.env"
   }
 
+  #  check the application properties
+  provisioner "file" {
+    source      = "../application.properties"
+    destination = "/tmp/application.properties"
+  }
+
   provisioner "file" {
     source      = "../scripts/webapp.service"
     destination = "/tmp/webapp.service"
