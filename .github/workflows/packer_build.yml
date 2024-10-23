@@ -47,6 +47,8 @@ jobs:
           echo "spring.jpa.properties.hibernate.format_sql=${{ secrets.SPRING_JPA_PROPERTIES_HIBERNATE_FORMAT_SQL }}" >> src/main/resources/application.properties
           echo "spring.jpa.properties.hibernate.dialect=${{ secrets.SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT }}" >> src/main/resources/application.properties
           cat src/main/resources/application.properties
+          
+          cp src/main/resources/application.properties ./
 
           touch .env
       - name: Build JAR file
