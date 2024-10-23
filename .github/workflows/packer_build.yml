@@ -8,9 +8,9 @@ on:
 env:
   SPRING_APPLICATION_NAME: ${{ secrets.SPRING_APPLICATION_NAME }}
   LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY: ${{ secrets.LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY }}
-  SPRING_DATASOURCE_URL: ${{ secrets.SPRING_DATASOURCE_URL }}
-  SPRING_DATASOURCE_USERNAME: ${{ secrets.SPRING_DATASOURCE_USERNAME }}
-  SPRING_DATASOURCE_PASSWORD: ${{ secrets.SPRING_DATASOURCE_PASSWORD }}
+#  SPRING_DATASOURCE_URL: ${{ secrets.SPRING_DATASOURCE_URL }}
+#  SPRING_DATASOURCE_USERNAME: ${{ secrets.SPRING_DATASOURCE_USERNAME }}
+#  SPRING_DATASOURCE_PASSWORD: ${{ secrets.SPRING_DATASOURCE_PASSWORD }}
   SPRING_DATASOURCE_DRIVER_CLASS_NAME: ${{ secrets.SPRING_DATASOURCE_DRIVER_CLASS_NAME }}
   SPRING_JPA_HIBERNATE_DDL_AUTO: ${{ secrets.SPRING_JPA_HIBERNATE_DDL_AUTO }}
   SPRING_JPA_SHOW_SQL: ${{ secrets.SPRING_JPA_SHOW_SQL }}
@@ -37,15 +37,16 @@ jobs:
           echo "spring.application.name=${{ secrets.SPRING_APPLICATION_NAME }}" > src/main/resources/application.properties
           echo "logging.level.org.springframework.security=${{ secrets.LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY }}" >> src/main/resources/application.properties
           echo "# Database Configuration" >> src/main/resources/application.properties
-          echo "spring.datasource.url=${{ secrets.SPRING_DATASOURCE_URL }}" >> src/main/resources/application.properties
-          echo "spring.datasource.username=${{ secrets.SPRING_DATASOURCE_USERNAME }}" >> src/main/resources/application.properties
-          echo "spring.datasource.password=${{ secrets.SPRING_DATASOURCE_PASSWORD }}" >> src/main/resources/application.properties
+          echo "spring.datasource.url=\${DB_URL}" >> src/main/resources/application.properties
+          echo "spring.datasource.username=\${DB_USERNAME}" >> src/main/resources/application.properties
+          echo "spring.datasource.password=\${DB_PASSWORD}" >> src/main/resources/application.properties
           echo "spring.datasource.driver-class-name=${{ secrets.SPRING_DATASOURCE_DRIVER_CLASS_NAME }}" >> src/main/resources/application.properties
           echo "# JPA/Hibernate Configuration" >> src/main/resources/application.properties
           echo "spring.jpa.hibernate.ddl-auto=${{ secrets.SPRING_JPA_HIBERNATE_DDL_AUTO }}" >> src/main/resources/application.properties
           echo "spring.jpa.show-sql=${{ secrets.SPRING_JPA_SHOW_SQL }}" >> src/main/resources/application.properties
           echo "spring.jpa.properties.hibernate.format_sql=${{ secrets.SPRING_JPA_PROPERTIES_HIBERNATE_FORMAT_SQL }}" >> src/main/resources/application.properties
           echo "spring.jpa.properties.hibernate.dialect=${{ secrets.SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT }}" >> src/main/resources/application.properties
+          cat src/main/resources/application.properties
 
       - name: Build JAR file
         run: ./mvnw clean package -Dmaven.test.skip=true

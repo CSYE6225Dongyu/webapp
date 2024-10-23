@@ -77,6 +77,11 @@ build {
   }
 
   provisioner "file" {
+    source      = "../.env"
+    destination = "/tmp/.env"
+  }
+
+  provisioner "file" {
     source      = "../scripts/webapp.service"
     destination = "/tmp/webapp.service"
   }
@@ -87,8 +92,9 @@ build {
       "CHECKPOINT_DISABLE=1",
     ]
     scripts = [
-      "../scripts/install_mysql.sh", # for mysql
+#      "../scripts/install_mysql.sh", # for mysql, no local for mysql
       "../scripts/install_java.sh",  #for java and unzip jar
+      "../scripts/prepare_folder.sh", # prepare folder for java env and jar
       "../scripts/systemd.sh"        # run web.service to start
     ]
   }
