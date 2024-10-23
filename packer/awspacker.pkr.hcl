@@ -47,7 +47,7 @@ variable "ami_users" {
 source "amazon-ebs" "my-ami" {
   region          = var.aws_region
   ami_name        = var.ami_name
-  ami_description = "AMI for CSYE6225 HW4"
+  ami_description = "AMI for CSYE6225 HW5"
   ami_users       = var.ami_users
 
   aws_polling {
@@ -76,6 +76,12 @@ build {
     destination = "/tmp/webapp.zip"
   }
 
+  #  done this in terraform user_data
+  #  provisioner "file" {
+  #    source      = "../.env"
+  #    destination = "/tmp/.env"
+  #  }
+
   provisioner "file" {
     source      = "../scripts/webapp.service"
     destination = "/tmp/webapp.service"
@@ -87,9 +93,10 @@ build {
       "CHECKPOINT_DISABLE=1",
     ]
     scripts = [
-      "../scripts/install_mysql.sh", # for mysql
-      "../scripts/install_java.sh",  #for java and unzip jar
-      "../scripts/systemd.sh"        # run web.service to start
+      #      "../scripts/install_mysql.sh", # for mysql, no local for mysql
+      "../scripts/install_java.sh",   #for java and unzip jar
+      "../scripts/prepare_folder.sh", # prepare folder for java env and jar
+      "../scripts/systemd.sh"         # run web.service to start
     ]
   }
 }

@@ -4,7 +4,7 @@ Documentation=https://github.com/dongyul1u/webapp
 After=network.target
 
 [Service]
-#EnvironmentFile=/opt/webapp/.env
+EnvironmentFile=/etc/webapp/.env
 WorkingDirectory=/opt/webapp/
 User=csye6225
 Type=simple
