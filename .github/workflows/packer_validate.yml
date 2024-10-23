@@ -26,6 +26,8 @@ jobs:
         run: |
           touch webapp.zip
           touch .env
+#           for test
+          touch application.properties
         working-directory: ./  # Create it in the root directory
 
       - name: Check Packer Format
