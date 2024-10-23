@@ -10,7 +10,7 @@ sudo mkdir /opt/webapp
 sudo cp /tmp/webapp.zip /opt/webapp/webapp.zip
 # for .env file
 sudo mkdir /etc/webapp
-#sudo cp /tmp/.env /etc/webapp/.env
+sudo cp /tmp/.env /etc/webapp/.env
 cd /opt/webapp
 sudo unzip webapp.zip -d /opt/webapp/
 
