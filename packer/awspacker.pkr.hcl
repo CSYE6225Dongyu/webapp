@@ -77,10 +77,10 @@ build {
   }
 
   #  temp .env for systemd
-    provisioner "file" {
-      source      = "../.env"
-      destination = "/tmp/.env"
-    }
+  provisioner "file" {
+    source      = "../.env"
+    destination = "/tmp/.env"
+  }
 
   provisioner "file" {
     source      = "../scripts/webapp.service"
