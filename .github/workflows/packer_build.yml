@@ -13,6 +13,7 @@ env:
   SPRING_JPA_SHOW_SQL: ${{ secrets.SPRING_JPA_SHOW_SQL }}
   SPRING_JPA_PROPERTIES_HIBERNATE_FORMAT_SQL: ${{ secrets.SPRING_JPA_PROPERTIES_HIBERNATE_FORMAT_SQL }}
   SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: ${{ secrets.SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT }}
+  SPRING_DATASOURCE_PASSWORD: ${{ secrets.SPRING_DATASOURCE_PASSWORD }}
 
 jobs:
   build-and-packer:
@@ -37,7 +38,7 @@ jobs:
           echo "# Database Configuration" >> src/main/resources/application.properties
           echo "spring.datasource.url=\${DB_URL}" >> src/main/resources/application.properties
           echo "spring.datasource.username=\${DB_USERNAME}" >> src/main/resources/application.properties
-          echo "spring.datasource.password=\${DB_PASSWORD}" >> src/main/resources/application.properties
+          echo "spring.datasource.password=${{ secrets.SPRING_DATASOURCE_PASSWORD }}" >> src/main/resources/application.properties
           echo "spring.datasource.driver-class-name=${{ secrets.SPRING_DATASOURCE_DRIVER_CLASS_NAME }}" >> src/main/resources/application.properties
           echo "# JPA/Hibernate Configuration" >> src/main/resources/application.properties
           echo "spring.jpa.hibernate.ddl-auto=${{ secrets.SPRING_JPA_HIBERNATE_DDL_AUTO }}" >> src/main/resources/application.properties
