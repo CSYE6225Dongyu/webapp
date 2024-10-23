@@ -76,10 +76,11 @@ build {
     destination = "/tmp/webapp.zip"
   }
 
-  provisioner "file" {
-    source      = "../.env"
-    destination = "/tmp/.env"
-  }
+  #  done this in terraform user_data
+  #  provisioner "file" {
+  #    source      = "../.env"
+  #    destination = "/tmp/.env"
+  #  }
 
   provisioner "file" {
     source      = "../scripts/webapp.service"
