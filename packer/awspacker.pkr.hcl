@@ -82,7 +82,7 @@ build {
     destination = "/tmp/.env"
   }
 
-  #  check the application properties
+  #    check the application properties
   provisioner "file" {
     source      = "../application.properties"
     destination = "/tmp/application.properties"
