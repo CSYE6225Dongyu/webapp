@@ -1,7 +1,6 @@
 package edu.neu.csye6225.csye6225fall2024.service;
 
 
-import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -26,7 +25,7 @@ public class DatabaseInitializationService implements CommandLineRunner {
 //        jdbcTemplate.execute("USE myapp");
 
         jdbcTemplate.execute("CREATE TABLE IF NOT EXISTS users (" +
-                "id BIGINT AUTO_INCREMENT PRIMARY KEY," +
+                "id CHAR(36) PRIMARY KEY," +
                 "email VARCHAR(255) UNIQUE NOT NULL," +
                 "password VARCHAR(255) NOT NULL," +
                 "first_name VARCHAR(255)," +

@@ -1,9 +1,12 @@
 package edu.neu.csye6225.csye6225fall2024.dto;
 
+//not used for generate UUID, it's a notation
+//import org.hibernate.validator.constraints.UUID;
+
 import java.time.LocalDateTime;
 
 public class UserGETDTO {
-    private Long id;
+    private String id;
     private String email;
     private String firstName;
     private String lastName;
@@ -11,7 +14,7 @@ public class UserGETDTO {
     private LocalDateTime accountUpdated;
 
     // Constructor
-    public UserGETDTO(Long id, String email, String firstName, String lastName, LocalDateTime accountCreated, LocalDateTime accountUpdated) {
+    public UserGETDTO(String id, String email, String firstName, String lastName, LocalDateTime accountCreated, LocalDateTime accountUpdated) {
         this.id = id;
         this.email = email;
         this.firstName = firstName;
@@ -26,7 +29,7 @@ public class UserGETDTO {
         return email;
     }
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
@@ -58,7 +61,7 @@ public class UserGETDTO {
         this.lastName = lastName;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 

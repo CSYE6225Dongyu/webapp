@@ -1,7 +1,7 @@
 package edu.neu.csye6225.csye6225fall2024.service;
 
-import edu.neu.csye6225.csye6225fall2024.dto.UserPostDTO;
 import edu.neu.csye6225.csye6225fall2024.dto.UserGETDTO;
+import edu.neu.csye6225.csye6225fall2024.dto.UserPostDTO;
 import edu.neu.csye6225.csye6225fall2024.dto.UserUpdateDTO;
 import edu.neu.csye6225.csye6225fall2024.model.UserModel;
 import edu.neu.csye6225.csye6225fall2024.repository.UserRepository;
@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.UUID;
 
 
 @Service
@@ -34,6 +35,7 @@ public class UserService {
             throw new IllegalArgumentException("missing filed required");
 
         UserModel user = new UserModel();
+        user.setId(UUID.randomUUID().toString());
         user.setEmail(userPostDTO.getEmail());
         // bycrypt
         user.setPassword(passwordEncoder.encode(userPostDTO.getPassword()));
@@ -43,6 +45,10 @@ public class UserService {
 
         user.setAccountCreated(LocalDateTime.now());
         user.setAccountUpdated(LocalDateTime.now());
+
+
+        System.out.println("user id: " +  user.getId());
+        System.out.println("user id: " +  user.getEmail());
 
         // save to database
         userRepository.save(user);

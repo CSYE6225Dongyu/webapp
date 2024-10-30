@@ -7,9 +7,10 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "users")
 public class UserModel {
+
+//    @GeneratedValue(strategy = GenerationType.AUTO)
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
     @Column(unique = true)
     private String email;
@@ -36,7 +37,7 @@ public class UserModel {
         return lastName;
     }
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
@@ -48,7 +49,7 @@ public class UserModel {
         return password;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 

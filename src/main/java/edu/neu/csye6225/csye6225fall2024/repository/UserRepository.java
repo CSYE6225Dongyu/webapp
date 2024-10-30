@@ -7,6 +7,6 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
-public interface UserRepository extends JpaRepository<UserModel, Long> {
+public interface UserRepository extends JpaRepository<UserModel, String> {
     Optional<UserModel> findByEmail(String email);
 }
