@@ -37,14 +37,12 @@ public class DatabaseInitializationService implements CommandLineRunner {
 
         // image metadata table
         jdbcTemplate.execute("CREATE TABLE IF NOT EXISTS images_metadata (" +
-                "id BIGINT AUTO_INCREMENT PRIMARY KEY," +
+                "id CHAR(36) PRIMARY KEY," +
                 "user_id CHAR(36) NOT NULL," +
-                "s3_object_key VARCHAR(255) NOT NULL," +
-                "bucket_name VARCHAR(255) NOT NULL," +
-                "content_type VARCHAR(50)," +
-                "file_size BIGINT," +
-                "upload_timestamp DATETIME DEFAULT CURRENT_TIMESTAMP," +
-                "FOREIGN KEY (user_id) REFERENCES users(id)" +
+                "file_name VARCHAR(255) NOT NULL," +
+                "url VARCHAR(255) NOT NULL," +
+                "upload_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP," +
+                "CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(id)" +
                 ")");
     }
 

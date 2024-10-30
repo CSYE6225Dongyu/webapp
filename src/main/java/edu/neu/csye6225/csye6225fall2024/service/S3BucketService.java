@@ -1,5 +1,6 @@
 package edu.neu.csye6225.csye6225fall2024.service;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
@@ -17,13 +18,18 @@ public class S3BucketService {
 
     private final S3Client s3Client;
 
-    // S3 bucket name
-    private final String bucketName = "your-s3-bucket-name";
+    private final String bucketName;
 
-    public S3BucketService() {
+
+    public S3BucketService(@Value("${aws.s3.bucket-name}") String bucketName,
+                           @Value("${aws.s3.region}") String region) {
+        this.bucketName = bucketName;
+
+//        System.out.println(bucketName);
+//        System.out.println(region);
         // Initialize S3 client with region and default credentials provider
         this.s3Client = S3Client.builder()
-                .region(Region.US_EAST_1)  // Replace with your bucket's region
+                .region(Region.of(region))  // Replace with your bucket's region
                 .credentialsProvider(DefaultCredentialsProvider.create())
                 .build();
     }
@@ -34,9 +40,9 @@ public class S3BucketService {
      * @return URL of the uploaded file
      * @throws IOException if file cannot be read
      */
-    public String uploadFile(MultipartFile file) throws IOException {
+    public String uploadFile(MultipartFile file, String fileUUID) throws IOException {
         // Generate a unique file name
-        String fileName =  file.getOriginalFilename();
+        String fileName =  file.getOriginalFilename() + fileUUID;
 
         // Construct the S3 PutObjectRequest
         PutObjectRequest putObjectRequest = PutObjectRequest.builder()

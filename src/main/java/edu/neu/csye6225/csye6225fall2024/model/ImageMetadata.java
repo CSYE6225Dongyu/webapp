@@ -1,11 +1,12 @@
 package edu.neu.csye6225.csye6225fall2024.model;
 
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "images_metadata")
@@ -13,10 +14,14 @@ public class ImageMetadata {
 
     @Id
     private  String id;
+
+    @Column(name = "user_id")
+    private String userId;// find by userID
+
     private  String fileName;
     private String url;
-    private LocalDate uploadDate;
-    private String userId;
+    private LocalDateTime uploadDate;
+
 
     public String getId() {
         return id;
@@ -30,7 +35,7 @@ public class ImageMetadata {
         return url;
     }
 
-    public LocalDate getUploadDate() {
+    public LocalDateTime getUploadDate() {
         return uploadDate;
     }
 
@@ -50,7 +55,7 @@ public class ImageMetadata {
         this.url = url;
     }
 
-    public void setUploadDate(LocalDate uploadDate) {
+    public void setUploadDate(LocalDateTime uploadDate) {
         this.uploadDate = uploadDate;
     }
 
