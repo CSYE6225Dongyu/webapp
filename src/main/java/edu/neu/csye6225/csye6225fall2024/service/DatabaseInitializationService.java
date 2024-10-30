@@ -24,6 +24,7 @@ public class DatabaseInitializationService implements CommandLineRunner {
 //
 //        jdbcTemplate.execute("USE myapp");
 
+        // users table
         jdbcTemplate.execute("CREATE TABLE IF NOT EXISTS users (" +
                 "id CHAR(36) PRIMARY KEY," +
                 "email VARCHAR(255) UNIQUE NOT NULL," +
@@ -34,25 +35,17 @@ public class DatabaseInitializationService implements CommandLineRunner {
                 "account_updated DATETIME" +
                 ")");
 
+        // image metadata table
+        jdbcTemplate.execute("CREATE TABLE IF NOT EXISTS images_metadata (" +
+                "id BIGINT AUTO_INCREMENT PRIMARY KEY," +
+                "user_id CHAR(36) NOT NULL," +
+                "s3_object_key VARCHAR(255) NOT NULL," +
+                "bucket_name VARCHAR(255) NOT NULL," +
+                "content_type VARCHAR(50)," +
+                "file_size BIGINT," +
+                "upload_timestamp DATETIME DEFAULT CURRENT_TIMESTAMP," +
+                "FOREIGN KEY (user_id) REFERENCES users(id)" +
+                ")");
     }
-
-
-    //not running before the spring start
-//    @PostConstruct
-//    public void initDatabase() {
-//        // create database
-//        jdbcTemplate.execute("CREATE DATABASE IF NOT EXISTS myapp");
-//
-//        //create table
-//        jdbcTemplate.execute("CREATE TABLE IF NOT EXISTS users (" +
-//                "id BIGINT AUTO_INCREMENT PRIMARY KEY," +
-//                "email VARCHAR(255) UNIQUE NOT NULL," +
-//                "password VARCHAR(255) NOT NULL," +
-//                "first_name VARCHAR(255)," +
-//                "last_name VARCHAR(255)," +
-//                "account_created DATETIME," +
-//                "account_updated DATETIME" +
-//                ")");
-//    }
 
 }
