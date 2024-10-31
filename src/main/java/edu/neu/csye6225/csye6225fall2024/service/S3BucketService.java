@@ -1,5 +1,8 @@
 package edu.neu.csye6225.csye6225fall2024.service;
 
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Timer;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,6 +18,9 @@ import java.net.URL;
 
 @Service
 public class S3BucketService {
+
+    @Autowired
+    private MeterRegistry meterRegistry;
 
     private final S3Client s3Client;
 
@@ -41,6 +47,7 @@ public class S3BucketService {
      * @throws IOException if file cannot be read
      */
     public String uploadFile(MultipartFile file, String fileUUID) throws IOException {
+        Timer.Sample sample = Timer.start(meterRegistry);
         // Generate a unique file name
         String fileName =  file.getOriginalFilename() + fileUUID;
 
@@ -56,6 +63,7 @@ public class S3BucketService {
 
         // Generate and return the URL of the uploaded file
         URL fileUrl = s3Client.utilities().getUrl(builder -> builder.bucket(bucketName).key(fileName));
+        sample.stop(meterRegistry.timer("s3.calls.timer", "operation", "uploadFile"));
         return fileUrl.toString();
     }
 
@@ -64,6 +72,7 @@ public class S3BucketService {
      * @param fileName Name of the file to delete
      */
     public void deleteFile(String fileName) {
+        Timer.Sample sample = Timer.start(meterRegistry);
         // Construct the S3 DeleteObjectRequest
         DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
                 .bucket(bucketName)
@@ -72,6 +81,7 @@ public class S3BucketService {
 
         // Delete the file
         s3Client.deleteObject(deleteObjectRequest);
+        sample.stop(meterRegistry.timer("s3.calls.timer", "operation", "deleteFile"));
     }
 
 }

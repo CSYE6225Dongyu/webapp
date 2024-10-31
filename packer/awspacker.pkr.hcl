@@ -93,6 +93,11 @@ build {
     destination = "/tmp/webapp.service"
   }
 
+  provisioner "file" {
+    source      = "../scripts/amazon-cloudwatch-agent.json"
+    destination = "/tmp/amazon-cloudwatch-agent.json"
+  }
+
   provisioner "shell" {
     environment_vars = [
       "DEBIAN_FRONTEND=noninteractive",
@@ -102,6 +107,7 @@ build {
       #      "../scripts/install_mysql.sh", # for mysql, no local for mysql
       "../scripts/install_java.sh",   #for java and unzip jar
       "../scripts/prepare_folder.sh", # prepare folder for java env and jar
+      "../scripts/install_cloudwatchAgent.sh",
       "../scripts/systemd.sh"         # run web.service to start
     ]
   }

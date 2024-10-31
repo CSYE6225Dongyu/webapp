@@ -1,0 +1,24 @@
+{
+  "metrics": {
+    "namespace":"DY-aws-cw-space",
+    "metrics_collected": {
+      "statsd": {
+        "service_address": ":8125",
+        "metrics_aggregation_interval": 10
+      }
+    }
+  },
+  "logs": {
+    "logs_collected": {
+      "files": {
+        "collect_list": [
+          {
+            "file_path": "/home/ubuntu/log/webapp.log",
+            "log_group_name": "csye6225-logGroup",
+            "log_stream_name": "webapp_log"
+          }
+        ]
+      }
+    }
+  }
+}

@@ -7,6 +7,7 @@ HELP.md
 !**/src/test/**/target/
 
 .env
+./log/*
 
 *.zip
 # Maven Wrapper files
