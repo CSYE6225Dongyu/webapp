@@ -47,7 +47,7 @@ variable "ami_users" {
 source "amazon-ebs" "my-ami" {
   region          = var.aws_region
   ami_name        = var.ami_name
-  ami_description = "AMI for CSYE6225 HW5"
+  ami_description = "AMI for CSYE6225 HW6"
   ami_users       = var.ami_users
 
   aws_polling {
@@ -108,7 +108,7 @@ build {
       "../scripts/install_java.sh",   #for java and unzip jar
       "../scripts/prepare_folder.sh", # prepare folder for java env and jar
       "../scripts/install_cloudwatchAgent.sh",
-      "../scripts/systemd.sh"         # run web.service to start
+      "../scripts/systemd.sh" # run web.service to start
     ]
   }
 }
