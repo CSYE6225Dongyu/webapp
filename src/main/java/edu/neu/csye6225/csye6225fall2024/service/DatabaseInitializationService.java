@@ -1,7 +1,6 @@
 package edu.neu.csye6225.csye6225fall2024.service;
 
 
-import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -25,8 +24,9 @@ public class DatabaseInitializationService implements CommandLineRunner {
 //
 //        jdbcTemplate.execute("USE myapp");
 
+        // users table
         jdbcTemplate.execute("CREATE TABLE IF NOT EXISTS users (" +
-                "id BIGINT AUTO_INCREMENT PRIMARY KEY," +
+                "id CHAR(36) PRIMARY KEY," +
                 "email VARCHAR(255) UNIQUE NOT NULL," +
                 "password VARCHAR(255) NOT NULL," +
                 "first_name VARCHAR(255)," +
@@ -35,25 +35,15 @@ public class DatabaseInitializationService implements CommandLineRunner {
                 "account_updated DATETIME" +
                 ")");
 
+        // image metadata table
+        jdbcTemplate.execute("CREATE TABLE IF NOT EXISTS images_metadata (" +
+                "id CHAR(36) PRIMARY KEY," +
+                "user_id CHAR(36) NOT NULL," +
+                "file_name VARCHAR(255) NOT NULL," +
+                "url VARCHAR(255) NOT NULL," +
+                "upload_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP," +
+                "CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(id)" +
+                ")");
     }
-
-
-    //not running before the spring start
-//    @PostConstruct
-//    public void initDatabase() {
-//        // create database
-//        jdbcTemplate.execute("CREATE DATABASE IF NOT EXISTS myapp");
-//
-//        //create table
-//        jdbcTemplate.execute("CREATE TABLE IF NOT EXISTS users (" +
-//                "id BIGINT AUTO_INCREMENT PRIMARY KEY," +
-//                "email VARCHAR(255) UNIQUE NOT NULL," +
-//                "password VARCHAR(255) NOT NULL," +
-//                "first_name VARCHAR(255)," +
-//                "last_name VARCHAR(255)," +
-//                "account_created DATETIME," +
-//                "account_updated DATETIME" +
-//                ")");
-//    }
 
 }

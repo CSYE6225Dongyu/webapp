@@ -1,20 +1,26 @@
 package edu.neu.csye6225.csye6225fall2024.service;
 
-import edu.neu.csye6225.csye6225fall2024.dto.UserPostDTO;
 import edu.neu.csye6225.csye6225fall2024.dto.UserGETDTO;
+import edu.neu.csye6225.csye6225fall2024.dto.UserPostDTO;
 import edu.neu.csye6225.csye6225fall2024.dto.UserUpdateDTO;
 import edu.neu.csye6225.csye6225fall2024.model.UserModel;
 import edu.neu.csye6225.csye6225fall2024.repository.UserRepository;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Timer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.UUID;
 
 
 @Service
 public class UserService {
+
+    @Autowired
+    private MeterRegistry meterRegistry;
 
     @Autowired
     private UserRepository userRepository;
@@ -24,6 +30,7 @@ public class UserService {
 
     //create user
     public void createUser(UserPostDTO userPostDTO) {
+        Timer.Sample sample = Timer.start(meterRegistry);
         //check the user
         Optional<UserModel> existUser = userRepository.findByEmail(userPostDTO.getEmail());
         if (existUser.isPresent()) {
@@ -34,6 +41,7 @@ public class UserService {
             throw new IllegalArgumentException("missing filed required");
 
         UserModel user = new UserModel();
+        user.setId(UUID.randomUUID().toString());
         user.setEmail(userPostDTO.getEmail());
         // bycrypt
         user.setPassword(passwordEncoder.encode(userPostDTO.getPassword()));
@@ -44,11 +52,17 @@ public class UserService {
         user.setAccountCreated(LocalDateTime.now());
         user.setAccountUpdated(LocalDateTime.now());
 
+
+        System.out.println("user id: " +  user.getId());
+        System.out.println("user id: " +  user.getEmail());
+
         // save to database
         userRepository.save(user);
+        sample.stop(meterRegistry.timer("db.userdata.insert.timer", "operation", "createUser"));
     }
 
     public void updateUser(String email, UserUpdateDTO userUpdateDTO) {
+        Timer.Sample sample = Timer.start(meterRegistry);
         UserModel user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
@@ -74,11 +88,14 @@ public class UserService {
         user.setAccountUpdated(LocalDateTime.now());
 
         userRepository.save(user);
+        sample.stop(meterRegistry.timer("db.userdata.update.timer", "operation", "updateUser"));
     }
 
     public UserGETDTO getUserByEmail(String email) {
+        Timer.Sample sample = Timer.start(meterRegistry);
         UserModel user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
+        sample.stop(meterRegistry.timer("db.userdata.find.timer", "operation", "getUserByEmail"));
         return new UserGETDTO(
                 user.getId(),
                 user.getEmail(),

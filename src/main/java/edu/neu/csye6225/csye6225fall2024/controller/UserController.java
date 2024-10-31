@@ -6,6 +6,8 @@ import edu.neu.csye6225.csye6225fall2024.dto.UserPostDTO;
 import edu.neu.csye6225.csye6225fall2024.dto.UserUpdateDTO;
 import edu.neu.csye6225.csye6225fall2024.service.UserService;
 import edu.neu.csye6225.csye6225fall2024.service.ValidateFields;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Timer;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,9 +19,11 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/v1/users")
+@RequestMapping("/v1/user")
 public class UserController {
 
+    @Autowired
+    private MeterRegistry meterRegistry;
     @Autowired
     private UserService userService;
     @Autowired
@@ -27,83 +31,78 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<UserGETDTO> createUser(@Valid @RequestBody UserPostDTO userPostDTO) {
+        meterRegistry.counter("api.v1.user.post.count").increment();
+        Timer.Sample sample = Timer.start(meterRegistry);
         try {
             // create user
             userService.createUser(userPostDTO);
             // return info
             UserGETDTO userGETDTO = userService.getUserByEmail(userPostDTO.getEmail());
+
             return ResponseEntity.status(HttpStatus.CREATED).body(userGETDTO);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        } finally {
+            sample.stop(meterRegistry.timer("api.v1.user.post.timer"));
         }
     }
-//    public ResponseEntity<UserGETDTO> creatUser(@RequestBody Map<String, Object> requestBody) {
-//
-//        // validate json
-//        String invalidField = validateFields.postValidate(requestBody);
-//        if (invalidField != null) {
-//            return ResponseEntity.badRequest().body(null);
-//        }
-//
-//        // transfer to DTO type
-//        UserPostDTO userPostDTO = new ObjectMapper().convertValue(requestBody, UserPostDTO.class);
-//
-//        try {
-//            // create user
-//            userService.createUser(userPostDTO);
-//            // return info
-//            UserGETDTO userGETDTO = userService.getUserByEmail(userPostDTO.getEmail());
-//            return ResponseEntity.status(HttpStatus.CREATED).body(userGETDTO);
-//        } catch (IllegalArgumentException e) {
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-//        }
-//    }
 
     @GetMapping("/self")
     public ResponseEntity<UserGETDTO> getUser() {
+        meterRegistry.counter("api.v1.user.self.get.count").increment();
+        Timer.Sample sample = Timer.start(meterRegistry);
         try {
             String email = getCurrentUserEmail();
             UserGETDTO user = userService.getUserByEmail(email);
             return ResponseEntity.ok(user);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        } finally {
+            sample.stop(meterRegistry.timer("api.v1.user.self.get.timer"));
         }
     }
 
     @PutMapping("/self")
     public ResponseEntity<String> updateUser(@RequestBody Map<String, Object> requestBody) {
-        if(validateFields.updateValidate(requestBody) != null)
-            return ResponseEntity.badRequest().body("Unexpected field: " + validateFields.updateValidate(requestBody));
-
-        UserUpdateDTO userUpdateDTO = new ObjectMapper().convertValue(requestBody, UserUpdateDTO.class);
+        meterRegistry.counter("api.v1.user.self.put.count").increment();
+        Timer.Sample sample = Timer.start(meterRegistry);
 
         try {
+            // Validate fields only once
+            String invalidField = validateFields.updateValidate(requestBody);
+            if (invalidField != null) {
+                return ResponseEntity.badRequest().body("Unexpected field: " + invalidField);
+            }
+
+            // Convert requestBody to UserUpdateDTO
+            UserUpdateDTO userUpdateDTO = new ObjectMapper().convertValue(requestBody, UserUpdateDTO.class);
+
+            // Get the current user's email
             String email = getCurrentUserEmail();
+
+            // Update user information
             userService.updateUser(email, userUpdateDTO);
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("User updated success");
+
+            return ResponseEntity.noContent().build();
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error occurred while updating user");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error occurred while updating user");
+        } finally {
+            // stop timer
+            sample.stop(meterRegistry.timer("api.v1.user.self.put.timer"));
         }
     }
+
 
     //get emial form SecurityContextHolder
     private String getCurrentUserEmail() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return authentication.getName();
     }
-
-//    //Unrecognized filed
-//    @ExceptionHandler(UnrecognizedPropertyException.class)
-//    public ResponseEntity<String> handleUnrecognizedPropertyException(UnrecognizedPropertyException ex) {
-//        String errorMessage = "Invalid JSON field: " + ex.getPropertyName();
-//        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessage);
-//    }
 
     @RequestMapping(method = {RequestMethod.GET, RequestMethod.PUT, RequestMethod.DELETE,RequestMethod.OPTIONS,RequestMethod.HEAD,RequestMethod.PATCH,RequestMethod.TRACE})
     public ResponseEntity<String> invalidMethod() {

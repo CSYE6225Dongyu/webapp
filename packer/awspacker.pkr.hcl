@@ -47,7 +47,7 @@ variable "ami_users" {
 source "amazon-ebs" "my-ami" {
   region          = var.aws_region
   ami_name        = var.ami_name
-  ami_description = "AMI for CSYE6225 HW5"
+  ami_description = "AMI for CSYE6225 HW6"
   ami_users       = var.ami_users
 
   aws_polling {
@@ -93,6 +93,11 @@ build {
     destination = "/tmp/webapp.service"
   }
 
+  provisioner "file" {
+    source      = "../scripts/amazon-cloudwatch-agent.json"
+    destination = "/tmp/amazon-cloudwatch-agent.json"
+  }
+
   provisioner "shell" {
     environment_vars = [
       "DEBIAN_FRONTEND=noninteractive",
@@ -102,7 +107,8 @@ build {
       #      "../scripts/install_mysql.sh", # for mysql, no local for mysql
       "../scripts/install_java.sh",   #for java and unzip jar
       "../scripts/prepare_folder.sh", # prepare folder for java env and jar
-      "../scripts/systemd.sh"         # run web.service to start
+      "../scripts/install_cloudwatchAgent.sh",
+      "../scripts/systemd.sh" # run web.service to start
     ]
   }
 }

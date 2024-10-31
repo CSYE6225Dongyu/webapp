@@ -1,6 +1,8 @@
 package edu.neu.csye6225.csye6225fall2024.controller;
 
 
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Timer;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -8,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -21,12 +22,20 @@ import java.util.Map;
 public class HealthCheckController {
 
     @Autowired
+    private MeterRegistry meterRegistry;
+
+    @Autowired
     private DataSource dataSource;
 
     //request method
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<String> DBHealthCheck(HttpServletRequest request) {
+        meterRegistry.counter("api.healthz.get.counter").increment();
+        Timer.Sample sample = Timer.start(meterRegistry);
+
         Map<String, String> response = new HashMap<>();
+
+        sample.stop(meterRegistry.timer("api.healthz.get.time"));
 
         // If body has payload, return bad request
         // use HttpServletRequest class make sure cover all type of body data
