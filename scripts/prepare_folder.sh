@@ -20,4 +20,4 @@ sudo unzip webapp.zip -d /opt/webapp/
 
 # Change ownership of the webapp directory and its contents
 sudo chown -R csye6225:csye6225 /opt/webapp
-sudo chown -R csye6225:csye6225 /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json
+
