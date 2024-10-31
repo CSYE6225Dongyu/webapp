@@ -1,6 +1,6 @@
 {
   "metrics": {
-    "namespace":"DY-aws-cw-space",
+    "namespace":"DY-aws-cw-space-1",
     "metrics_collected": {
       "statsd": {
         "service_address": ":8125",
@@ -13,8 +13,8 @@
       "files": {
         "collect_list": [
           {
-            "file_path": "/home/ubuntu/log/webapp.log",
-            "log_group_name": "csye6225-logGroup",
+            "file_path": "/opt/webapp/log/webapp.log",
+            "log_group_name": "csye6225-logGroup-1",
             "log_stream_name": "webapp_log"
           }
         ]
