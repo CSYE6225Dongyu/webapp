@@ -56,6 +56,9 @@ public class DatabaseInitializationService implements CommandLineRunner {
                 "CONSTRAINT fk_verification_user FOREIGN KEY (user_id) REFERENCES users(id)" + // 外键关联 users 表
                 ")");
 
+        // trigger , delete expired data when insert
+        jdbcTemplate.execute("DROP TRIGGER IF EXISTS clean_expired_verifications;");
+
 
     }
 }
