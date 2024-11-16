@@ -32,7 +32,8 @@ public class DatabaseInitializationService implements CommandLineRunner {
                 "first_name VARCHAR(255)," +
                 "last_name VARCHAR(255)," +
                 "account_created DATETIME," +
-                "account_updated DATETIME" +
+                "account_updated DATETIME," +
+                "is_verified BOOLEAN DEFAULT FALSE" +
                 ")");
 
         // image metadata table
@@ -44,6 +45,17 @@ public class DatabaseInitializationService implements CommandLineRunner {
                 "upload_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP," +
                 "CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(id)" +
                 ")");
-    }
 
+        // verification info table
+        jdbcTemplate.execute("CREATE TABLE IF NOT EXISTS email_verification (" +
+                "id CHAR(36) PRIMARY KEY," +
+                "user_id CHAR(36) NOT NULL," +
+                "token VARCHAR(255) NOT NULL," +
+                "expires_at DATETIME NOT NULL," +
+                "created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP," +
+                "CONSTRAINT fk_verification_user FOREIGN KEY (user_id) REFERENCES users(id)" + // 外键关联 users 表
+                ")");
+
+
+    }
 }

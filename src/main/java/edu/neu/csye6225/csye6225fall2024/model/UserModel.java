@@ -20,6 +20,15 @@ public class UserModel {
     private String lastName;
     private LocalDateTime accountCreated;
     private LocalDateTime accountUpdated;
+    private Boolean isVerified = false;
+
+    public void setisVerified(boolean validate) {
+        isVerified = validate;
+    }
+
+    public boolean isVerified() {
+        return isVerified;
+    }
 
     public LocalDateTime getAccountCreated() {
         return accountCreated;
