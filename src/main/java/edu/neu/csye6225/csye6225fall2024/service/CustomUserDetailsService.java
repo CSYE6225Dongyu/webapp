@@ -22,7 +22,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         UserModel user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-        if (!user.isVerified()) {
+        if (!user.getIsVerified()) {
             throw new IllegalArgumentException("User email is not verified.");
         }
 

@@ -1,26 +1,39 @@
 package edu.neu.csye6225.csye6225fall2024.service;
-
-import com.amazonaws.services.sns.AmazonSNS;
-import com.amazonaws.services.sns.AmazonSNSClientBuilder;
-import com.amazonaws.services.sns.model.PublishRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import software.amazon.awssdk.services.sns.SnsClient;
+import software.amazon.awssdk.services.sns.model.PublishRequest;
+import software.amazon.awssdk.services.sns.model.PublishResponse;
 
 @Service
 public class SnsService {
 
-    private final AmazonSNS snsClient;
-    private final String topicArn;
+    private final SnsClient snsClient;
 
-    public SnsService(@Value("${aws.sns.topic.arn}") String topicArn) {
-        this.snsClient = AmazonSNSClientBuilder.defaultClient();
-        this.topicArn = topicArn;
+    @Value("${aws.sns.topic.arn}") // read SNS Topic ARN
+    private String topicArn;
+
+    public SnsService(SnsClient snsClient) {
+        this.snsClient = snsClient;
     }
 
-    public void publishUserCreatedMessage(String email) {
-        String message = String.format("{\"email\": \"%s\"}", email);
-        PublishRequest publishRequest = new PublishRequest(topicArn, message);
-        snsClient.publish(publishRequest);
-        System.out.println("Message published to SNS: " + message);
+    /**
+     * release SNS message
+     * @param userEmail email
+     * @return message ID
+     */
+    public String publishEvent(String userEmail) {
+        // set message
+        String message = String.format("{\"userEmail\": \"%s\", \"event\": \"UserRegistered\"}", userEmail);
+
+        // pub request
+        PublishRequest request = PublishRequest.builder()
+                .topicArn(topicArn)
+                .message(message)
+                .build();
+
+        PublishResponse response = snsClient.publish(request);
+
+        return response.messageId();
     }
 }

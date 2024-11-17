@@ -26,7 +26,7 @@ public class UserModel {
         isVerified = validate;
     }
 
-    public boolean isVerified() {
+    public boolean getIsVerified() {
         return isVerified;
     }
 

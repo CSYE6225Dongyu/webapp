@@ -55,6 +55,10 @@ jobs:
           echo "spring.servlet.multipart.max-file-size=5MB" >> src/main/resources/application.properties
           echo "spring.servlet.multipart.max-request-size=5MB" >> src/main/resources/application.properties
           
+          echo "# aws SNS Configuration" >> src/main/resources/application.properties
+          echo "aws.sns.topic.arn=\${AWS_SNS_TOPIC_ARN}" >> src/main/resources/application.properties
+          echo "aws.sns.region=\${AWS_REGION}" >> src/main/resources/application.properties
+          
           echo "# StatsD Config" >> src/main/resources/application.properties
           echo "management.statsd.metrics.export.enabled=true" >> src/main/resources/application.properties
           echo "management.statsd.metrics.export.host=localhost" >> src/main/resources/application.properties

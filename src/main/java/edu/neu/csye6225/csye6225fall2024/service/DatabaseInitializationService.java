@@ -53,12 +53,8 @@ public class DatabaseInitializationService implements CommandLineRunner {
                 "token VARCHAR(255) NOT NULL," +
                 "expires_at DATETIME NOT NULL," +
                 "created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP," +
-                "CONSTRAINT fk_verification_user FOREIGN KEY (user_id) REFERENCES users(id)" + // 外键关联 users 表
+                "CONSTRAINT fk_verification_user FOREIGN KEY (user_id) REFERENCES users(id)" +
                 ")");
-
-        // trigger , delete expired data when insert
-        jdbcTemplate.execute("DROP TRIGGER IF EXISTS clean_expired_verifications;");
-
 
     }
 }
