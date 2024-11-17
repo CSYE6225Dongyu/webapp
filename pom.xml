@@ -97,8 +97,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
-<<<<<<< HEAD
-=======
 
         <dependency>
             <groupId>ch.qos.logback</groupId>
@@ -110,9 +108,6 @@
             <version>7.2</version>
         </dependency>
 
-
-
->>>>>>> main
     </dependencies>
 
     <build>
