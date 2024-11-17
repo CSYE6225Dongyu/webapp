@@ -51,6 +51,12 @@ public class ImageController {
 
         Timer.Sample sample = Timer.start(meterRegistry);
         try {
+            String userId = getCurrentUserId();
+            List<ImageMetadata> images = imageMetadataService.getUserImages(userId);
+
+            if (!images.isEmpty()) {
+                this.deleteUserImages();
+            }
             // check type
             String contentType = file.getContentType();
             if (contentType == null ||
@@ -62,7 +68,7 @@ public class ImageController {
             }
 
             // do upload
-            String userId = getCurrentUserId();
+//            String userId = getCurrentUserId();
             String fileName = file.getOriginalFilename();
             String fileUUID = UUID.randomUUID().toString();
             String fileUrl = s3Service.uploadFile(file, fileUUID);
