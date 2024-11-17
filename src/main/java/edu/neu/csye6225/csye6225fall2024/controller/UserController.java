@@ -35,7 +35,7 @@ public class UserController {
         Timer.Sample sample = Timer.start(meterRegistry);
         try {
             // create user
-            userService.createUser(userPostDTO);
+            userService.handleUserCreation(userPostDTO);
             // return info
             UserGETDTO userGETDTO = userService.getUserByEmail(userPostDTO.getEmail());
 

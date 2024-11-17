@@ -22,20 +22,53 @@ public class UserService {
     @Autowired
     private MeterRegistry meterRegistry;
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final SnsService snsService;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;// password class from AuthorizeConfig
+    // constructor inject dependency
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, SnsService snsService) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.snsService = snsService;
+    }
+
+    // send SNS and handle Multiple create
+    public void handleUserCreation(UserPostDTO userPostDTO) {
+        // check if user exit
+        Optional<UserModel> existingUserOpt = userRepository.findByEmail(userPostDTO.getEmail());
+
+        if (existingUserOpt.isPresent()) {
+            UserModel existingUser = existingUserOpt.get();
+
+            if (existingUser.getIsVerified()) {
+                throw new IllegalArgumentException("User email is already validated.");
+            } else {
+                // if not verified send SNS message
+                sendValidationMessage(existingUser.getId(), existingUser.getEmail());
+                return;
+            }
+        }
+
+        // if no user, create the user
+        createUser(userPostDTO);
+
+        // send SNS
+        Optional<UserModel> newUserOpt = userRepository.findByEmail(userPostDTO.getEmail());
+        newUserOpt.ifPresent(newUser -> sendValidationMessage(newUser.getId(), newUser.getEmail()));
+    }
+
+    private void sendValidationMessage(String userId, String email) {
+        String message = String.format("{\"userId\": \"%s\", \"email\": \"%s\"}", userId, email);
+        snsService.publishEvent(message);
+    }
+
+
 
     //create user
     public void createUser(UserPostDTO userPostDTO) {
         Timer.Sample sample = Timer.start(meterRegistry);
         //check the user
-        Optional<UserModel> existUser = userRepository.findByEmail(userPostDTO.getEmail());
-        if (existUser.isPresent()) {
-            throw new IllegalArgumentException("User email already exists.");
-        }
 
         if(userPostDTO.getEmail() == null || userPostDTO.getPassword() == null || userPostDTO.getLastName() == null)
             throw new IllegalArgumentException("missing filed required");

@@ -8,6 +8,7 @@ HELP.md
 
 .env
 ./log/*
+log
 
 *.zip
 # Maven Wrapper files

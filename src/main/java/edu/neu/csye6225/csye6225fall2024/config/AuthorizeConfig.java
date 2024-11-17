@@ -37,6 +37,7 @@ public class AuthorizeConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/v1/user").permitAll()// only allow v1/users without auth
                         .requestMatchers("/healthz").permitAll()
+                        .requestMatchers("/verify/**").permitAll()
                         .requestMatchers("/v1/user/self", "/v1/user/self/pic").authenticated()
                         .anyRequest().authenticated())// don't care about the roles
                 .httpBasic(Customizer.withDefaults());
