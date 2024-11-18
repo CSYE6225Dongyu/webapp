@@ -10,5 +10,9 @@ import java.util.Optional;
 @Repository
 public interface EmailVerificationRepository extends JpaRepository<EmailVerification, String> {
     //if localdate > expires date, wont be selected
+    Optional<EmailVerification> findByUserId(String userId);
+
     Optional<EmailVerification> findByTokenAndExpiresAtAfter(String token, LocalDateTime currentTime);
+
+    Optional<EmailVerification> findByEmail(String email);
 }
