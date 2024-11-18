@@ -99,3 +99,59 @@ jobs:
         run: |
           packer build -var-file=awspacker.pkvars.hcl awspacker.pkr.hcl
         working-directory: ./packer  # Set Packer directory to "packer" in the root directory
+
+      - name: Capture AMI ID
+        id: capture_ami
+        run: |
+          AMI_ID=$(packer build -machine-readable -var-file=awspacker.pkvars.hcl awspacker.pkr.hcl | grep 'artifact,0,id' | cut -d, -f6)
+          echo "AMI_ID=$AMI_ID" >> $GITHUB_ENV
+        working-directory: ./packer
+
+#      Not used , as already take the latest AMI ID in launch template
+#      - name: Update Launch Template with New AMI ID
+#        id: update_launch_template
+#        run: |
+#          aws ec2 create-launch-template-version \
+#            --launch-template-id ${{ secrets.LAUNCH_TEMPLATE_ID }} \
+#            --source-version $LATEST \
+#            --version-description "Updated with new AMI ID" \
+#            --launch-template-data "{\"ImageId\":\"${{ env.AMI_ID }}\"}"
+#          NEW_VERSION=$(aws ec2 describe-launch-template-versions \
+#            --launch-template-id ${{ secrets.LAUNCH_TEMPLATE_ID }} \
+#            --query 'LaunchTemplateVersions[-1].VersionNumber' --output text)
+#          echo "NEW_LAUNCH_TEMPLATE_VERSION=$NEW_VERSION" >> $GITHUB_ENV
+
+      - name: Update Auto Scaling Group
+        run: |
+          aws autoscaling update-auto-scaling-group \
+            --auto-scaling-group-name ${{ secrets.ASG_NAME }} \
+            --launch-template "LaunchTemplateId=${{ secrets.LAUNCH_TEMPLATE_ID }},Version=${{ env.LAUNCH_TEMPLATE_VERSION }}"
+
+      - name: Start Instance Refresh
+        id: instance_refresh
+        run: |
+          REFRESH_ID=$(aws autoscaling start-instance-refresh \
+            --auto-scaling-group-name ${{ secrets.ASG_NAME }} \
+            --preferences '{"MinHealthyPercentage": 100, "InstanceWarmup": 300}' \
+            --query 'InstanceRefreshId' --output text)
+          echo "REFRESH_ID=$REFRESH_ID" >> $GITHUB_ENV
+
+      - name: Wait for Instance Refresh to Complete
+        run: |
+          while true; do
+            STATUS=$(aws autoscaling describe-instance-refreshes \
+              --auto-scaling-group-name ${{ secrets.ASG_NAME }} \
+              --instance-refresh-ids ${{ env.REFRESH_ID }} \
+              --query 'InstanceRefreshes[0].Status' --output text)
+            echo "Current Instance Refresh Status: $STATUS"
+            if [[ "$STATUS" == "Successful" ]]; then
+              echo "Instance refresh completed successfully."
+              break
+            elif [[ "$STATUS" == "Failed" ]]; then
+              echo "Instance refresh failed."
+              exit 1
+            else
+              echo "Instance refresh is still in progress..."
+              sleep 30
+            fi
+          done
