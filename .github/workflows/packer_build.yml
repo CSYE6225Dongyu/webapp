@@ -16,7 +16,8 @@ env:
   SPRING_DATASOURCE_PASSWORD: ${{ secrets.SPRING_DATASOURCE_PASSWORD }}
 
 jobs:
-  build-and-deploy:
+  build-and-packer:
+    if: github.repository == 'CSYE6225Dongyu/webapp'
     runs-on: ubuntu-latest
 
     steps:
@@ -29,22 +30,53 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+      # no need for .env when package the JAR file, create in terraform:user_data
+      # add .env to run webapp.service
       - name: Generate application.properties & .env
         run: |
           echo "spring.application.name=${{ secrets.SPRING_APPLICATION_NAME }}" > src/main/resources/application.properties
           echo "logging.level.org.springframework.security=${{ secrets.LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY }}" >> src/main/resources/application.properties
+          
           echo "# Database Configuration" >> src/main/resources/application.properties
           echo "spring.datasource.url=\${DB_URL}" >> src/main/resources/application.properties
           echo "spring.datasource.username=\${DB_USERNAME}" >> src/main/resources/application.properties
           echo "spring.datasource.password=${{ secrets.SPRING_DATASOURCE_PASSWORD }}" >> src/main/resources/application.properties
           echo "spring.datasource.driver-class-name=${{ secrets.SPRING_DATASOURCE_DRIVER_CLASS_NAME }}" >> src/main/resources/application.properties
+          
+          echo "# JPA/Hibernate Configuration" >> src/main/resources/application.properties
+          echo "spring.jpa.hibernate.ddl-auto=${{ secrets.SPRING_JPA_HIBERNATE_DDL_AUTO }}" >> src/main/resources/application.properties
+          echo "spring.jpa.show-sql=${{ secrets.SPRING_JPA_SHOW_SQL }}" >> src/main/resources/application.properties
+          echo "spring.jpa.properties.hibernate.format_sql=${{ secrets.SPRING_JPA_PROPERTIES_HIBERNATE_FORMAT_SQL }}" >> src/main/resources/application.properties
+          echo "spring.jpa.properties.hibernate.dialect=${{ secrets.SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT }}" >> src/main/resources/application.properties
+          
           echo "# AWS S3 Configuration" >> src/main/resources/application.properties
           echo "aws.s3.bucket-name=\${AWS_S3_BUCKET_NAME}" >> src/main/resources/application.properties
           echo "aws.s3.region=\${AWS_REGION}" >> src/main/resources/application.properties
-          echo "# AWS SNS Configuration" >> src/main/resources/application.properties
+          echo "spring.servlet.multipart.max-file-size=5MB" >> src/main/resources/application.properties
+          echo "spring.servlet.multipart.max-request-size=5MB" >> src/main/resources/application.properties
+          
+          echo "# aws SNS Configuration" >> src/main/resources/application.properties
           echo "aws.sns.topic.arn=\${AWS_SNS_TOPIC_ARN}" >> src/main/resources/application.properties
           echo "aws.sns.region=\${AWS_REGION}" >> src/main/resources/application.properties
+          
+          echo "# StatsD Config" >> src/main/resources/application.properties
+          echo "management.statsd.metrics.export.enabled=true" >> src/main/resources/application.properties
+          echo "management.statsd.metrics.export.host=localhost" >> src/main/resources/application.properties
+          echo "management.statsd.metrics.export.port=8125" >> src/main/resources/application.properties
+          echo "management.statsd.metrics.export.flavor=datadog" >> src/main/resources/application.properties
+          echo "management.statsd.metrics.export.polling-frequency=5s" >> src/main/resources/application.properties
+          
+          echo "# Logging Config" >> src/main/resources/application.properties
+          echo "logging.level.io.micrometer=DEBUG" >> src/main/resources/application.properties
+          echo "logging.level.software.amazon.awssdk.services.cloudwatch=DEBUG" >> src/main/resources/application.properties
+          echo "logging.file.name=./log/webapp.log" >> src/main/resources/application.properties
+          cat src/main/resources/application.properties
+          
+          cat src/main/resources/application.properties
+          
+          cp src/main/resources/application.properties ./
 
+          touch .env
       - name: Build JAR file
         run: ./mvnw clean package -Dmaven.test.skip=true
 
