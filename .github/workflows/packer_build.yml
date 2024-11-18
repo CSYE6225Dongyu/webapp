@@ -91,21 +91,21 @@ jobs:
           aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws configure set default.region ${{ secrets.AWS_REGION }}
 
-      - name: Initialize Packer
-        run: packer init .
-        working-directory: ./packer
+#      - name: Initialize Packer
+#        run: packer init .
+#        working-directory: ./packer
+#
+#      - name: Run Packer to build the AMI
+#        run: |
+#          packer build -var-file=awspacker.pkvars.hcl awspacker.pkr.hcl
+#        working-directory: ./packer  # Set Packer directory to "packer" in the root directory
 
-      - name: Run Packer to build the AMI
-        run: |
-          packer build -var-file=awspacker.pkvars.hcl awspacker.pkr.hcl
-        working-directory: ./packer  # Set Packer directory to "packer" in the root directory
-
-      - name: Capture AMI ID
-        id: capture_ami
-        run: |
-          AMI_ID=$(packer build -machine-readable -var-file=awspacker.pkvars.hcl awspacker.pkr.hcl | grep 'artifact,0,id' | cut -d, -f6)
-          echo "AMI_ID=$AMI_ID" >> $GITHUB_ENV
-        working-directory: ./packer
+#      - name: Capture AMI ID
+#        id: capture_ami
+#        run: |
+#          AMI_ID=$(packer build -machine-readable -var-file=awspacker.pkvars.hcl awspacker.pkr.hcl | grep 'artifact,0,id' | cut -d, -f6)
+#          echo "AMI_ID=$AMI_ID" >> $GITHUB_ENV
+#        working-directory: ./packer
 
 #      Not used , as already take the latest AMI ID in launch template
 #      - name: Update Launch Template with New AMI ID
@@ -125,7 +125,7 @@ jobs:
         run: |
           aws autoscaling update-auto-scaling-group \
             --auto-scaling-group-name ${{ secrets.ASG_NAME }} \
-            --launch-template "LaunchTemplateId=${{ secrets.LAUNCH_TEMPLATE_ID }},Version=${{ env.LAUNCH_TEMPLATE_VERSION }}"
+            --launch-template "LaunchTemplateId=${{ secrets.LAUNCH_TEMPLATE_ID }},Version=${{ secrets.LAUNCH_TEMPLATE_VERSION }}"
 
       - name: Start Instance Refresh
         id: instance_refresh
@@ -152,6 +152,6 @@ jobs:
               exit 1
             else
               echo "Instance refresh is still in progress..."
-              sleep 30
+              sleep 15
             fi
           done
