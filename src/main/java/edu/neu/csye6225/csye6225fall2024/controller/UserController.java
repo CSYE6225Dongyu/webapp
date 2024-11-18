@@ -41,6 +41,7 @@ public class UserController {
 
             return ResponseEntity.status(HttpStatus.CREATED).body(userGETDTO);
         } catch (IllegalArgumentException e) {
+            System.out.println(e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);

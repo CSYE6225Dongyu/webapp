@@ -8,8 +8,10 @@ import java.time.LocalDateTime;
 public class EmailVerification {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
+    private  String id;
+
+    @Column(nullable = false, unique = true)
+    private String email;
 
     @Column(name = "user_id", nullable = false)
     private String userId;
@@ -17,7 +19,7 @@ public class EmailVerification {
     @Column(name = "token", nullable = false, unique = true)
     private String token;
 
-    @Column(name = "expires_at", nullable = false)
+    @Column(name = "expires_at") // set to null when generate
     private LocalDateTime expiresAt;
 
     // Getters and Setters
@@ -27,6 +29,10 @@ public class EmailVerification {
 
     public String getUserId() {
         return userId;
+    }
+
+    public String getEmail() {
+        return email;
     }
 
     public String getToken() {
@@ -51,5 +57,9 @@ public class EmailVerification {
 
     public void setExpiresAt(LocalDateTime expiresAt) {
         this.expiresAt = expiresAt;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

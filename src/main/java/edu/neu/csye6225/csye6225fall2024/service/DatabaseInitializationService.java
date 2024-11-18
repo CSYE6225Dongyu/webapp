@@ -50,8 +50,9 @@ public class DatabaseInitializationService implements CommandLineRunner {
         jdbcTemplate.execute("CREATE TABLE IF NOT EXISTS email_verification (" +
                 "id CHAR(36) PRIMARY KEY," +
                 "user_id CHAR(36) NOT NULL," +
+                "email VARCHAR(255) UNIQUE NOT NULL," +
                 "token VARCHAR(255) NOT NULL," +
-                "expires_at DATETIME NOT NULL," +
+                "expires_at DATETIME," +
                 "created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP," +
                 "CONSTRAINT fk_verification_user FOREIGN KEY (user_id) REFERENCES users(id)" +
                 ")");
