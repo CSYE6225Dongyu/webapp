@@ -91,14 +91,14 @@ jobs:
           aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws configure set default.region ${{ secrets.AWS_REGION }}
 
-#      - name: Initialize Packer
-#        run: packer init .
-#        working-directory: ./packer
-#
-#      - name: Run Packer to build the AMI
-#        run: |
-#          packer build -var-file=awspacker.pkvars.hcl awspacker.pkr.hcl
-#        working-directory: ./packer
+      - name: Initialize Packer
+        run: packer init .
+        working-directory: ./packer
+
+      - name: Run Packer to build the AMI
+        run: |
+          packer build -var-file=awspacker.pkvars.hcl awspacker.pkr.hcl
+        working-directory: ./packer
 
       - name: Query Latest AMI
         id: query_ami
