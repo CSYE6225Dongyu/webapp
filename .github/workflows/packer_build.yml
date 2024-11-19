@@ -104,7 +104,8 @@ jobs:
         id: query_ami
         run: |
           AMI_ID=$(aws ec2 describe-images \
-            --filters "Name=tag:Name,Values=csye6225-webapp-image-*" "Name=state,Values=available" \
+            --owners self \
+            --filters "Name=name,Values=csye6225-webapp-image-*" "Name=state,Values=available" \
             --query 'Images | sort_by(@, &CreationDate)[-1].ImageId' \
             --output text)
           if [[ -z "$AMI_ID" || "$AMI_ID" == "None" ]]; then
