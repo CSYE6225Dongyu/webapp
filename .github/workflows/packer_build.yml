@@ -95,16 +95,23 @@ jobs:
         run: packer init .
         working-directory: ./packer
 
-      - name: Build AMI and Capture AMI ID
-        id: build_ami
+      - name: Run Packer to build the AMI
         run: |
-          AMI_OUTPUT=$(packer build -machine-readable -var-file=awspacker.pkvars.hcl awspacker.pkr.hcl | grep 'artifact,0,id' | cut -d, -f6)
-          AMI_ID=$(echo "$AMI_OUTPUT" | grep -o 'ami-[a-z0-9]\{8,17\}')
-          if [[ -z "$AMI_ID" ]]; then
-            echo "Failed to extract valid AMI ID from Packer output."
+          packer build -var-file=awspacker.pkvars.hcl awspacker.pkr.hcl
+        working-directory: ./packer
+
+      - name: Query Latest AMI
+        id: query_ami
+        run: |
+          AMI_ID=$(aws ec2 describe-images \
+            --filters "Name=tag:Name,Values=csye6225-webapp-image-*" "Name=state,Values=available" \
+            --query 'Images | sort_by(@, &CreationDate)[-1].ImageId' \
+            --output text)
+          if [[ -z "$AMI_ID" || "$AMI_ID" == "None" ]]; then
+            echo "No valid AMI found."
             exit 1
           fi
-          echo "Extracted AMI ID: $AMI_ID"
+          echo "Latest AMI ID: $AMI_ID"
           echo "AMI_ID=$AMI_ID" >> $GITHUB_ENV
 
       - name: Update Launch Template with New AMI ID
@@ -117,6 +124,7 @@ jobs:
           NEW_VERSION=$(aws ec2 describe-launch-template-versions \
             --launch-template-id ${{ secrets.LAUNCH_TEMPLATE_ID }} \
             --query 'LaunchTemplateVersions[-1].VersionNumber' --output text)
+          echo "LAUNCH_TEMPLATE_VERSION=$NEW_VERSION"
           echo "LAUNCH_TEMPLATE_VERSION=$NEW_VERSION" >> $GITHUB_ENV
 
       - name: Update Auto Scaling Group
