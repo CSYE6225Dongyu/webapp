@@ -95,12 +95,17 @@ jobs:
         run: packer init .
         working-directory: ./packer
 
-      - name: Build AMI using Packer
+      - name: Build AMI and Capture AMI ID
         id: build_ami
         run: |
-          AMI_ID=$(packer build -machine-readable -var-file=awspacker.pkvars.hcl awspacker.pkr.hcl | grep 'artifact,0,id' | cut -d, -f6)
+          AMI_OUTPUT=$(packer build -machine-readable -var-file=awspacker.pkvars.hcl awspacker.pkr.hcl | grep 'artifact,0,id' | cut -d, -f6)
+          AMI_ID=$(echo "$AMI_OUTPUT" | grep -o 'ami-[a-z0-9]\{8,17\}')
+          if [[ -z "$AMI_ID" ]]; then
+            echo "Failed to extract valid AMI ID from Packer output."
+            exit 1
+          fi
+          echo "Extracted AMI ID: $AMI_ID"
           echo "AMI_ID=$AMI_ID" >> $GITHUB_ENV
-        working-directory: ./packer
 
       - name: Update Launch Template with New AMI ID
         id: update_launch_template
