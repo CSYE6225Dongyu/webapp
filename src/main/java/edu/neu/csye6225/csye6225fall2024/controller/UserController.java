@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/v1/user")
+@RequestMapping("/v2/user")
 public class UserController {
 
     @Autowired
@@ -30,7 +30,7 @@ public class UserController {
     private ValidateFields validateFields;
 
     @PostMapping
-    public ResponseEntity<UserGETDTO> createUser(@Valid @RequestBody UserPostDTO userPostDTO) {
+    public ResponseEntity<?> createUser(@Valid @RequestBody UserPostDTO userPostDTO) {
         meterRegistry.counter("api.v1.user.post.count").increment();
         Timer.Sample sample = Timer.start(meterRegistry);
         try {
@@ -41,10 +41,10 @@ public class UserController {
 
             return ResponseEntity.status(HttpStatus.CREATED).body(userGETDTO);
         } catch (IllegalArgumentException e) {
-            System.out.println(e);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            System.out.println(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Maybe Something wrong with aws setting");
         } finally {
             sample.stop(meterRegistry.timer("api.v1.user.post.timer"));
         }
